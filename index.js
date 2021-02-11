@@ -28,7 +28,7 @@ mongoose
 
 app.use(cors());
 
-app.use("/auth", require("./routers/authRouter"));
+app.use("/api/auth", require("./routers/authRouter"));
 
 app.use((req, res) => {
   res.status(404).json({

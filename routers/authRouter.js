@@ -54,56 +54,85 @@ router.post("/register", async (req, res) => {
         .status(400)
         .json({ errorMassage: "Email already exists, please login" });
 
-    const salt = await bcrypt.genSalt();
-    const passwordHash = await bcrypt.hash(password, salt);
-
-    const newUser = new User({
-      email,
-      passwordHash,
-      username,
-      avatar,
-    });
-
-    const savedUser = await newUser.save();
-
-    const token = jwt.sign(
-      {
-        user: savedUser._id,
-      },
-      process.env.JWT_SECRET
-    );
-
     const tokenvertiv = jwt.sign(
       {
+        username,
         email,
         password,
       },
-      process.env.JWT_SECRET,
+      process.env.JWT_ACTIVATION,
       {
         expiresIn: "15m",
       }
     );
 
     const emailData = {
-      from: '"ACTIV ACCOUNT" <satorecloud@gmail.com',
+      from: '"Activaction Account" <satorecloud@gmail.com',
       to: email,
       subject: "Account Activation",
       html: `
                 <h1>Click here to active your account</h1>
-                <p>${process.env.CLIENT_URL}/uers/activate/${tokenvertiv}</p>
+                <p>${process.env.CLIENT_URL}api/auth/activation/${tokenvertiv}</p>
                 <hr/>
                 <p>This email contain sensitive info</p>
                 <p>${process.env.CLIEN_URL}</p>
                 `,
     };
-    //transporter.sendMail(emailData,(err,info)=>{
-    //    if(err) throw err
-    //    console.log("Email sent " + info.response)
-    res.json({ token }).send();
-    //})
+    transporter.sendMail(emailData, (err, info) => {
+      if (err) throw err;
+      console.log("Email sent " + info.response);
+      res
+        .json({
+          message: `Email has been sent to ${email}`,
+        })
+        .send();
+    });
   } catch (error) {
     console.error(error);
     res.status(500).send();
+  }
+});
+
+router.post("/activation", (req, res) => {
+  const { token } = req.body;
+
+  if (token) {
+    jwt.verify(token, process.env.JWT_ACTIVATION, (err, decode) => {
+      if (err) {
+        console.log("Failed");
+        return res.status(401).json({
+          message: "Error Token Expired",
+        });
+      } else {
+        const { email, username, password } = jwt.decode(token);
+        bcrypt.hash(password, 10, function (err, hash) {
+          const passwordHash = hash;
+          const user = new User({
+            username,
+            email,
+            passwordHash,
+          });
+          user.save((err, user) => {
+            if (err) {
+              console.log("Save error", errorHandler(err));
+              return res.status(401).json({
+                errors: errorHandler(err),
+              });
+            } else {
+              return res.json({
+                success: true,
+                message: user,
+                message: "Signup success",
+              });
+            }
+          });
+        });
+      }
+    });
+  } else {
+    return res.json({
+      message: "error happening please try again",
+    });
   }
 });
 
@@ -131,7 +160,6 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ errorMassage: "Please Check Your data" });
 
     const userexist = await User.findOne(conditions);
-    console.log(userexist);
     if (!userexist)
       return res
         .status(400)
