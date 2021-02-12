@@ -14,7 +14,6 @@ const userShcema = new Schema(
       type: String,
       trim: true,
       required: true,
-      default: "",
     },
     phone: String,
     alamat: String,
@@ -27,10 +26,17 @@ const userShcema = new Schema(
       type: Array,
       default: [],
     },
-    favorit: String,
+    favorit: {
+      type: Array,
+      default: [],
+    },
     resetPasswordLink: {
       data: String,
       default: "",
+    },
+    cart: {
+      type: Array,
+      default: [],
     },
   },
   { timestamps: true }

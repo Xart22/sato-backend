@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
 
 dotenv.config();
 
@@ -25,10 +26,11 @@ mongoose
   .catch((err) => {
     console.error(err);
   });
-
+app.use(cookieParser());
 app.use(cors());
 
 app.use("/api/auth", require("./routers/authRouter"));
+app.use("/api", require("./routers/categoryRouter"));
 
 app.use((req, res) => {
   res.status(404).json({
