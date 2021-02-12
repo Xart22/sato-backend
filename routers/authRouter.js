@@ -155,7 +155,7 @@ router.post("/login", async (req, res) => {
     let conditions = !!username
       ? (username = { username })
       : (email = { email });
-
+    con
     if (!conditions || !password)
       return res.status(400).json({ errorMassage: "Please Check Your data" });
 
