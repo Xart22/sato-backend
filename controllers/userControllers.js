@@ -29,31 +29,29 @@ const userContr = {
       });
 
       if (!email)
-        return res
-          .status(400)
-          .json({ errorMassage: "Email must not be empty" });
+        return res.status(400).json({ message: "Email must not be empty" });
 
       if (!email.match(re))
         return res
           .status(400)
-          .json({ errorMassage: "Email must be a valid email address" });
+          .json({ message: "Email must be a valid email address" });
 
       if (!email || !password || !passwordVertif)
-        return res.status(400).json({ errorMassage: "Please Check Your data" });
+        return res.status(400).json({ message: "Please Check Your data" });
 
       if (password.lenght < 8)
         return res
           .status(400)
-          .json({ errorMassage: "Password Must Be 8 character" });
+          .json({ message: "Password Must Be 8 character" });
 
       if (password !== passwordVertif)
-        return res.status(400).json({ errorMassage: "Password do not match" });
+        return res.status(400).json({ message: "Password do not match" });
 
       const existEmail = await User.findOne({ email });
       if (existEmail)
         return res
           .status(400)
-          .json({ errorMassage: "Email already exists, please login" });
+          .json({ message: "Email already exists, please login" });
 
       const passwordHash = await bcrypt.hash(password, 10);
       const newUser = new User({
@@ -103,9 +101,8 @@ const userContr = {
                 console.log("Email sent " + info.response);
               }); */
       res.json({ token }).send();
-    } catch (error) {
-      console.error(error);
-      res.status(500).send();
+    } catch (err) {
+      res.status(500).json({ message: err });
     }
   },
   login: async (req, res) => {
@@ -116,22 +113,20 @@ const userContr = {
         ? (username = { username })
         : (email = { email });
       if (!conditions || !password)
-        return res.status(400).json({ errorMassage: "Please Check Your data" });
+        return res.status(400).json({ message: "Please Check Your data" });
 
       const userexist = await User.findOne(conditions);
       if (!userexist)
         return res
           .status(400)
-          .json({ errorMassage: "Email or username not registered" });
+          .json({ message: "Email or username not registered" });
 
       const passwordCorrect = await bcrypt.compare(
         password,
         userexist.passwordHash
       );
       if (!passwordCorrect)
-        return res
-          .status(400)
-          .json({ errorMassage: "Wrong email or password" });
+        return res.status(400).json({ message: "Wrong email or password" });
       const token = jwt.sign(
         {
           user: userexist._id,
@@ -155,9 +150,8 @@ const userContr = {
         path: "/api/auth/refesh_token",
       });
       res.json({ token }).send();
-    } catch (error) {
-      console.error(error);
-      res.status(500).send();
+    } catch (err) {
+      res.status(500).json({ message: err });
     }
   },
   refeshToken: (req, res) => {
@@ -180,18 +174,16 @@ const userContr = {
         );
         res.json({ user, token });
       });
-    } catch (error) {
-      console.error(error);
-      res.status(500).send();
+    } catch (err) {
+      res.status(500).json({ message: err });
     }
   },
   logout: async (req, res) => {
     try {
       res.clearCookie("refeshtoken", { path: "/api/auth/refesh_token" });
       return res.json({ message: "oke!" });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: error });
+    } catch (err) {
+      res.status(500).json({ message: err });
     }
   },
   getUser: async (req, res) => {
@@ -199,9 +191,8 @@ const userContr = {
       const user = await User.findById(req.user).select("-passwordHash");
       if (!user) return res.status(400).json({ msg: "not found" });
       res.json(user);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: error });
+    } catch (err) {
+      res.status(500).json({ message: err });
     }
   },
 };
