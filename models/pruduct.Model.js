@@ -19,6 +19,21 @@ const productSchema = new Schema(
       require: true,
       trim: true,
     },
+    stock: {
+      type: Number,
+      require: true,
+      trim: true,
+    },
+    origin: {
+      type: String,
+      require: true,
+      trim: true,
+    },
+    brand: {
+      type: String,
+      require: true,
+      trim: true,
+    },
     description: {
       type: String,
       require: true,

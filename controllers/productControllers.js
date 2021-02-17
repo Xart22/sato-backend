@@ -75,6 +75,9 @@ const productCtrl = {
         category,
         discount,
         image,
+        stock,
+        origin,
+        brand,
       } = req.body;
       if (!image) return res.status(400).json({ message: "No image" });
       const product = await Product.findOne({ product_id });
@@ -89,6 +92,9 @@ const productCtrl = {
         category,
         discount,
         image,
+        stock,
+        origin,
+        brand,
       });
 
       await newProduct.save();
@@ -107,6 +113,9 @@ const productCtrl = {
         category,
         discount,
         image,
+        stock,
+        origin,
+        brand,
       } = req.body;
       if (!image) return res.status(400).json({ message: "No image" });
       await Product.findOneAndUpdate(
@@ -119,6 +128,9 @@ const productCtrl = {
           category,
           discount,
           image,
+          stock,
+          origin,
+          brand,
         }
       );
       res.json({ message: "Success Update Product" });
