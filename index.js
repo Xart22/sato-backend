@@ -3,6 +3,8 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const fileUpload = require("express-fileupload");
+const path = require("path");
 
 dotenv.config();
 
@@ -28,13 +30,21 @@ mongoose
   });
 app.use(cookieParser());
 app.use(cors());
+app.use(
+  fileUpload({
+    useTempFiles: true,
+  })
+);
 
+//Route User
 app.use("/api/auth", require("./routers/authRouter"));
+//Route Product
 app.use("/api", require("./routers/categoryRouter"));
+app.use("/api", require("./routers/upload"));
+app.use("/api", require("./routers/productRouter"));
 
 app.use((req, res) => {
   res.status(404).json({
-    success: false,
     msg: "Page Not Founded",
   });
 });

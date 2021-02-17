@@ -28,13 +28,4 @@ router.get("/refesh_token", userContr.refeshToken);
 
 router.get("/infousr", auth, userContr.getUser);
 
-/* router.get("/", auth, async (req, res) => {
-  try {
-    const user = await User.findById(req.user).select("-passwordHash");
-    res.json(user);
-  } catch (error) {
-    console.log(error.message);
-    res.status(500).send("Server Error");
-  }
-}); */
 module.exports = router;
