@@ -2,13 +2,13 @@ const jwt = require("jsonwebtoken");
 
 const auth = (req, res, next) => {
   try {
-    const token = req.header("x-auth-token");
+    const token = req.header("Authorization");
     if (!token)
       return res.status(401).json({ message: "No Token, auth denied" });
     jwt.verify(token, process.env.JWT_TOKEN, (err, result) => {
       if (err)
         return res.status(400).json({ message: "Invalid Authentication", err });
-      req.user = result.user;
+      req.user = result.user.user;
       next();
     });
   } catch (error) {
