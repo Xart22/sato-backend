@@ -189,7 +189,7 @@ const userContr = {
   getUser: async (req, res) => {
     try {
       const user = await User.findById(req.user).select("-passwordHash");
-      if (!user) return res.status(400).json({ msg: "not found" });
+      if (!user) return res.status(400).json({ message: "not found" });
       res.json(user);
     } catch (err) {
       res.status(500).json({ message: err });
